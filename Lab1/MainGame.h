@@ -27,9 +27,9 @@ private:
 	bool collision(glm::vec3 m1Pos, float m1Rad, glm::vec3 m2Pos, float m2Rad);
 	void playAudio(unsigned int Source, glm::vec3 pos);
 
-	Window _gameDisplay;
-	GameState _gameState;
-	CreateMesh meshes[2];
+	Window gameWindow;
+	GameState gameState;
+	CreateMesh meshes[4];
 
 	int rows = 16;
 	int collums = 16;

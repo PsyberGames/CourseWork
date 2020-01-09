@@ -8,7 +8,7 @@ Transform transform;
 
 MainGame::MainGame()
 {
-	_gameState = GameState::PLAY;
+	gameState = GameState::PLAY;
 	Window* _gameDisplay = new Window(); //new display
 	CreateMesh* meshes();
 	
@@ -26,21 +26,23 @@ void MainGame::run()
 
 void MainGame::initSystems()
 {
-	_gameDisplay.initWindow();
+	gameWindow.initWindow();
 	whistle = soundDevice.soundLoad("..\\res\\bang.wav");
 	backGroundMusic = soundDevice.soundLoad("..\\res\\background.wav");
 	
-	meshes[0].LoadMesh("..\\res\\monkey3.obj");
+	meshes[0].LoadMesh("..\\res\\boat.obj");
 	meshes[1].LoadMesh("..\\res\\cube.obj");
+	meshes[2].LoadMesh("..\\res\\tree.obj");
+	meshes[3].LoadMesh("..\\res\\skybox.obj");
 	
-	myCamera.initCamera(glm::vec3(0, 0, -5), 70.0f, (float)_gameDisplay.getWidth()/_gameDisplay.getHeight(), 0.01f, 1000.0f);
+	myCamera.initCamera(glm::vec3(0, 8, -15), 70.0f, (float)gameWindow.getWidth()/ gameWindow.getHeight(), 0.01f, 1000.0f);
 
 	counter = 1.0f;
 }
 
 void MainGame::gameLoop()
 {
-	while (_gameState != GameState::EXIT)
+	while (gameState != GameState::EXIT)
 	{
 		processInput();
 		drawGame();
@@ -61,7 +63,7 @@ void MainGame::processInput()
 		{
 			if (evnt.key.keysym.sym == SDLK_ESCAPE)
 			{
-				_gameState = GameState::EXIT;
+				gameState = GameState::EXIT;
 			}
 			switch (evnt.key.keysym.sym)
 			{
@@ -93,11 +95,11 @@ void MainGame::processInput()
 		{
 			if (evnt.button.y > (768 / 2))
 			{
-			myCamera.Pitch(0.013);
+			myCamera.Pitch(0.033);
 			}
 			if (evnt.button.y < (768 / 2))
 			{
-			myCamera.Pitch(-0.013);
+			myCamera.Pitch(-0.033);
 			}
 		}
 		
@@ -112,7 +114,8 @@ bool MainGame::collision(glm::vec3 m1Pos, float m1Rad, glm::vec3 m2Pos, float m2
 
 	if (distance < (m1Rad + m2Rad))
 	{
-		soundDevice.listenerSet(myCamera.getPos(), m1Pos); //add bool to mesh
+		//add bool to mesh
+		soundDevice.listenerSet(myCamera.getPos(), m1Pos); 
 		playAudio(whistle, m1Pos);
 		return true;
 	}
@@ -127,13 +130,13 @@ void MainGame::playAudio(unsigned int Source, glm::vec3 pos)
 	
 	ALint state; 
 	alGetSourcei(Source, AL_SOURCE_STATE, &state);
-	/*
-	Possible values of state
-	AL_INITIAL
-	AL_STOPPED
-	AL_PLAYING
-	AL_PAUSED
-	*/
+	//
+	//state all within openAL
+	//AL_INITIAL
+	//AL_STOPPED
+	//AL_PLAYING
+	//AL_PAUSED
+	//
 	if (AL_PLAYING != state)
 	{
 		soundDevice.soundPlay(Source, pos);
@@ -142,23 +145,32 @@ void MainGame::playAudio(unsigned int Source, glm::vec3 pos)
 
 void MainGame::drawGame()
 {
-	_gameDisplay.clearWindow(0.0f, 0.0f, 0.0f, 1.0f);
-	
-	ImportShader shader("..\\res\\shader"); //new shader
-	Texture2D texture("..\\res\\grass.jpg"); //load texture
-	Texture2D texture1("..\\res\\water.jpg"); //load texture
+	gameWindow.clearWindow(0.0f, 0.0f, 0.0f, 1.0f);
+	//new shader
+	ImportShader shader("..\\res\\shader"); 
+	//load texture
+	Texture2D texture("..\\res\\grass.jpg"); 
+	//load texture
+	Texture2D texture1("..\\res\\water.jpg"); 
+	////load texture
+	Texture2D texture2("..\\res\\tree.jpg");
+	////load texture
+	Texture2D texture3("..\\res\\boat.jpg");
 	//water
 	for (int i = 0; i < rows; i++)
 	{
 		for (int t = 0; t < collums; t++)
 		{
-			transform.SetPos(glm::vec3(0 + (i * 2), -2, 0 + (t*2)));
+			transform.SetPos(glm::vec3(-5 + (i * 2), -2, -6 + (t*2)));
 			transform.SetRot(glm::vec3(0.0, 0.0, 0));
 			transform.SetScale(glm::vec3(1, 1, 1));
-			
+			// bind the shader to that mesh 
 			shader.Bind();
+			//update the shader for that mesh
 			shader.Update(transform, myCamera);
-			texture.Bind(1);
+			//bind the texture to the mesh 
+			texture1.Bind(0);
+			//draw the mesh to window
 			meshes[1].Draw();
 
 			
@@ -177,13 +189,16 @@ void MainGame::drawGame()
 
 			}
 			else {
-				transform.SetPos(glm::vec3(0 + (i * 2), -0.5, 0 + (t * 2)));
+				transform.SetPos(glm::vec3(-2 + (i * 2), -0.5, -2 + (t * 2)));
 				transform.SetRot(glm::vec3(0.0, 0.0, 0));
 				transform.SetScale(glm::vec3(1, 0.5, 1));
-
+				// bind the shader to that mesh 
 				shader.Bind();
+				//update the shader for that mesh
 				shader.Update(transform, myCamera);
+				//bind the texture to the mesh 
 				texture.Bind(0);
+				//draw the mesh to window
 				meshes[1].Draw();
 			}
 
@@ -191,34 +206,84 @@ void MainGame::drawGame()
 		}
 		
 	}
-	
-	
+	//trees
+	for (int i = 0; i < rows; i++)
+	{
+		for (int t = 0; t < collums; t++)
+		{
 
-	transform.SetPos(glm::vec3(sinf(counter), 0.5, 0.0));
-	transform.SetRot(glm::vec3(0.0, 0.0, counter * 5));
+			if (i <= 3 || i >= 10 || t <= 3 || t >= 10)
+			{
+
+			}
+			else {
+				transform.SetPos(glm::vec3(0 + (i * 2), -0.2, 0 + (t * 2)));
+				transform.SetRot(glm::vec3(0.0, 0.0, 0));
+				transform.SetScale(glm::vec3(1, 1, 1));
+				// bind the shader to that mesh 
+				shader.Bind();
+				//update the shader for that mesh
+				shader.Update(transform, myCamera);
+				//bind the texture to the mesh 
+				texture2.Bind(0);
+				//draw the mesh to window
+				meshes[2].Draw();
+			}
+
+
+		}
+
+	}
+	
+	//ship 1 setting transform and rotation and scale etc.
+	transform.SetPos(glm::vec3(sinf(counter), -0.5, 0.0));
+	transform.SetRot(glm::vec3(0.0, -80, 0));
 	transform.SetScale(glm::vec3(0.6, 0.6, 0.6));
 
+	// bind the shader to that mesh 
 	shader.Bind();
+	//update the shader for that mesh
 	shader.Update(transform, myCamera);
-	texture.Bind(0);
+	//bind the texture to the mesh 
+	texture3.Bind(0);
+	//draw the mesh to window
 	meshes[0].Draw();
+	//update the mesh sphere collider data so we can detect collisions.
 	meshes[0].UpdateSphereColData(*transform.GetPos(), 0.62f);
 	
-
+	//ship 2 setting transform and rotation and scale etc.
 	transform.SetPos(glm::vec3(-sinf(counter), -0.5, -sinf(counter)*5));
-	transform.SetRot(glm::vec3(0.0, 0.0, counter * 5));
+	transform.SetRot(glm::vec3(0.0, 0.0, 0));
 	transform.SetScale(glm::vec3(0.6, 0.6, 0.6));
-
+	// bind the shader to that mesh 
 	shader.Bind();
+	//update the shader for that mesh
 	shader.Update(transform, myCamera);
-	texture.Bind(0);
+	//bind the texture to the mesh 
+	texture3.Bind(0);
+	//draw the mesh to window
 	meshes[0].Draw();
+	//update the mesh sphere collider data so we can detect collisions.
 	meshes[0].UpdateSphereColData(*transform.GetPos(), 0.62f);
 	counter = counter + 0.05f;
+
+
+	//cheap version of a skybox ............... really simple and basic but this can be improved on quite easily ***!!!!!!
+	transform.SetPos(glm::vec3(-5 , -2, -6));
+	transform.SetRot(glm::vec3(0.0, 0.0, 0));
+	transform.SetScale(glm::vec3(-100, -100, -100));
+	// bind the shader to that mesh 
+	shader.Bind();
+	//update the shader for that mesh
+	shader.Update(transform, myCamera);
+	//bind the texture to the mesh 
+	texture1.Bind(0);
+
+	meshes[1].Draw();
 
 				
 	glEnableClientState(GL_COLOR_ARRAY); 
 	glEnd();
 
-	_gameDisplay.swapBuffer();
+	gameWindow.swapBuffer();
 } 
