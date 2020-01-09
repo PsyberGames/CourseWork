@@ -8,7 +8,7 @@
 #include "Transform.h"
 #include "SoundManager.h"
 
-enum class GameState{PLAY, EXIT};
+enum class GameCondition{PLAY, EXIT};
 
 class MainGame
 {
@@ -20,15 +20,15 @@ public:
 
 private:
 
-	void initSystems();
-	void processInput();
-	void gameLoop();
-	void drawGame();
-	bool collision(glm::vec3 m1Pos, float m1Rad, glm::vec3 m2Pos, float m2Rad);
-	void playAudio(unsigned int Source, glm::vec3 pos);
+	void initGameSystems();
+	void Input();
+	void UpdateLoop();
+	void Draw();
+	bool collisDetect(glm::vec3 m1Pos, float m1Rad, glm::vec3 m2Pos, float m2Rad);
+	void playSnd(unsigned int Source, glm::vec3 pos);
 
 	Window gameWindow;
-	GameState gameState;
+	GameCondition gameState;
 	CreateMesh meshes[4];
 
 	int rows = 16;
@@ -37,11 +37,11 @@ private:
 	
 	
 	MainCamera myCamera;
-	SoundManager soundDevice;
+	SoundManager sndDevice;
 	
 
 	float counter;
-	unsigned int whistle;
-	unsigned int backGroundMusic;
+	unsigned int crash;
+	unsigned int BGMusic;
 };
 

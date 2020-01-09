@@ -8,8 +8,9 @@ Transform transform;
 
 MainGame::MainGame()
 {
-	gameState = GameState::PLAY;
-	Window* _gameDisplay = new Window(); //new display
+	gameState = GameCondition::PLAY;
+	//new window
+	Window* gameWindow = new Window(); 
 	CreateMesh* meshes();
 	
 }
@@ -20,15 +21,15 @@ MainGame::~MainGame()
 
 void MainGame::run()
 {
-	initSystems(); 
-	gameLoop();
+	initGameSystems(); 
+	UpdateLoop();
 }
 
-void MainGame::initSystems()
+void MainGame::initGameSystems()
 {
 	gameWindow.initWindow();
-	whistle = soundDevice.soundLoad("..\\res\\bang.wav");
-	backGroundMusic = soundDevice.soundLoad("..\\res\\background.wav");
+	crash = sndDevice.soundLoad("..\\res\\crash.wav");
+	BGMusic = sndDevice.soundLoad("..\\res\\bg.wav");
 	
 	meshes[0].LoadMesh("..\\res\\boat.obj");
 	meshes[1].LoadMesh("..\\res\\cube.obj");
@@ -40,32 +41,32 @@ void MainGame::initSystems()
 	counter = 1.0f;
 }
 
-void MainGame::gameLoop()
+void MainGame::UpdateLoop()
 {
-	while (gameState != GameState::EXIT)
+	while (gameState != GameCondition::EXIT)
 	{
-		processInput();
-		drawGame();
-		collision(meshes[0].getSpherePos(), meshes[0].getSphereRadius(), meshes[1].getSpherePos(), meshes[1].getSphereRadius());
-		playAudio(backGroundMusic, glm::vec3(0.0f,0.0f,0.0f));
+		Input();
+		Draw();
+		collisDetect(meshes[0].getSpherePos(), meshes[0].getSphereRadius(), meshes[1].getSpherePos(), meshes[1].getSphereRadius());
+		playSnd(BGMusic, glm::vec3(0.0f,0.0f,0.0f));
 	}
 }
 
-void MainGame::processInput()
+void MainGame::Input()
 {
-	SDL_Event evnt;
+	SDL_Event evntHandler;
 
 	//get and process events
-	while(SDL_PollEvent(&evnt)) 
+	while(SDL_PollEvent(&evntHandler))
 	{
 		//Keyboard input
-		if (evnt.type == SDL_KEYDOWN)
+		if (evntHandler.type == SDL_KEYDOWN)
 		{
-			if (evnt.key.keysym.sym == SDLK_ESCAPE)
+			if (evntHandler.key.keysym.sym == SDLK_ESCAPE)
 			{
-				gameState = GameState::EXIT;
+				gameState = GameCondition::EXIT;
 			}
-			switch (evnt.key.keysym.sym)
+			switch (evntHandler.key.keysym.sym)
 			{
 			case SDLK_w:
 				myCamera.MoveForward(0.5f);
@@ -83,21 +84,21 @@ void MainGame::processInput()
 			}
 		}
 		// Mouse input
-		if (evnt.button.x < (1024/2))
+		if (evntHandler.button.x < (1024/2))
 		{		
 		myCamera.RotateY(0.033);			
 		}
-		if (evnt.button.x > (1024/2))
+		if (evntHandler.button.x > (1024/2))
 		{			
 		myCamera.RotateY(-0.033);			
 		}
-		if (evnt.button.y != 0)
+		if (evntHandler.button.y != 0)
 		{
-			if (evnt.button.y > (768 / 2))
+			if (evntHandler.button.y > (768 / 2))
 			{
 			myCamera.Pitch(0.033);
 			}
-			if (evnt.button.y < (768 / 2))
+			if (evntHandler.button.y < (768 / 2))
 			{
 			myCamera.Pitch(-0.033);
 			}
@@ -108,15 +109,15 @@ void MainGame::processInput()
 }
 
 
-bool MainGame::collision(glm::vec3 m1Pos, float m1Rad, glm::vec3 m2Pos, float m2Rad)
+bool MainGame::collisDetect(glm::vec3 m1Pos, float m1Rad, glm::vec3 m2Pos, float m2Rad)
 {
 	float distance = glm::sqrt((m2Pos.x - m1Pos.x)*(m2Pos.x - m1Pos.x) + (m2Pos.y - m1Pos.y)*(m2Pos.y - m1Pos.y) + (m2Pos.z - m1Pos.z)*(m2Pos.z - m1Pos.z));
 
 	if (distance < (m1Rad + m2Rad))
 	{
 		//add bool to mesh
-		soundDevice.listenerSet(myCamera.getPos(), m1Pos); 
-		playAudio(whistle, m1Pos);
+		sndDevice.listenerSet(myCamera.getPos(), m1Pos);
+		playSnd(crash, m1Pos);
 		return true;
 	}
 	else
@@ -125,25 +126,23 @@ bool MainGame::collision(glm::vec3 m1Pos, float m1Rad, glm::vec3 m2Pos, float m2
 	}
 }
 
-void MainGame::playAudio(unsigned int Source, glm::vec3 pos)
+void MainGame::playSnd(unsigned int Source, glm::vec3 pos)
 {
-	
-	ALint state; 
-	alGetSourcei(Source, AL_SOURCE_STATE, &state);
-	//
 	//state all within openAL
 	//AL_INITIAL
 	//AL_STOPPED
 	//AL_PLAYING
 	//AL_PAUSED
-	//
+	ALint state; 
+	alGetSourcei(Source, AL_SOURCE_STATE, &state);
+	
 	if (AL_PLAYING != state)
 	{
-		soundDevice.soundPlay(Source, pos);
+		sndDevice.soundPlay(Source, pos);
 	}
 }
 
-void MainGame::drawGame()
+void MainGame::Draw()
 {
 	gameWindow.clearWindow(0.0f, 0.0f, 0.0f, 1.0f);
 	//new shader
@@ -156,6 +155,8 @@ void MainGame::drawGame()
 	Texture2D texture2("..\\res\\tree.jpg");
 	////load texture
 	Texture2D texture3("..\\res\\boat.jpg");
+
+	//Level Generation below
 	//water
 	for (int i = 0; i < rows; i++)
 	{
