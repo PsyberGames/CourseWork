@@ -147,6 +147,7 @@ void MainGame::drawGame()
 	ImportShader shader("..\\res\\shader"); //new shader
 	Texture2D texture("..\\res\\grass.jpg"); //load texture
 	Texture2D texture1("..\\res\\water.jpg"); //load texture
+	//water
 	for (int i = 0; i < rows; i++)
 	{
 		for (int t = 0; t < collums; t++)
@@ -157,9 +158,36 @@ void MainGame::drawGame()
 			
 			shader.Bind();
 			shader.Update(transform, myCamera);
-			texture.Bind(0);
+			texture.Bind(1);
 			meshes[1].Draw();
+
 			
+			
+		}
+		
+	}
+	//land
+	for (int i = 0; i < rows; i++)
+	{
+		for (int t = 0; t < collums; t++)
+		{
+			
+			if (i <= 2 || i >= 13 || t <= 2 || t >= 11)
+			{
+
+			}
+			else {
+				transform.SetPos(glm::vec3(0 + (i * 2), -0.5, 0 + (t * 2)));
+				transform.SetRot(glm::vec3(0.0, 0.0, 0));
+				transform.SetScale(glm::vec3(1, 0.5, 1));
+
+				shader.Bind();
+				shader.Update(transform, myCamera);
+				texture.Bind(0);
+				meshes[1].Draw();
+			}
+
+
 		}
 		
 	}
