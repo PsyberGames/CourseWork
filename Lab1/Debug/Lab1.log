@@ -1,0 +1,10 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(452,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (Lab1.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  MainGame.cpp
+C:\Users\500189222\Desktop\CourseWork\Lab1\MainGame.cpp(86,25): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\500189222\Desktop\CourseWork\Lab1\MainGame.cpp(90,26): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\500189222\Desktop\CourseWork\Lab1\MainGame.cpp(96,24): warning C4305: 'argument': truncation from 'double' to 'float'
+  Window.cpp
+  main.cpp
+  Generating Code...
+C:\Users\500189222\Desktop\CourseWork\Lab1\MainGame.cpp(100,25): warning C4305: 'argument': truncation from 'double' to 'float'
+  Lab1.vcxproj -> C:\Users\500189222\Desktop\CourseWork\Debug\CourseWork.exe

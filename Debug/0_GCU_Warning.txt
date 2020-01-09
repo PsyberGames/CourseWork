@@ -1,0 +1,8 @@
+
+BLOCKED FILE ALERT
+
+A file has been blocked due to the 'Blocked File Types' rule.
+Context: 'Lab1.exe'
+Disallowed due to filename
+Ticket Number: '0820-58a0-c550-0001'
+Contact your system administrator if further information is required.
