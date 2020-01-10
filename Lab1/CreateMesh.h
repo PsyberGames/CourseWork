@@ -63,7 +63,7 @@ public:
 	void Draw();
 	void init(Vert* vertices, unsigned int numVertices, unsigned int* indices, unsigned int numIndices);
 	void LoadMesh(const std::string& filename);
-	void initModel(const IndexedMesh& model);
+	void initMesh(const IndexedMesh& model);
 	void UpdateSphereColData(glm::vec3 pos, float radius);
 	glm::vec3 getSpherePos() { return sphereCollider.GetPos(); }
 	float getSphereRadius() { return sphereCollider.GetRadius(); }

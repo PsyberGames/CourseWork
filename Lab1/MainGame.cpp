@@ -109,38 +109,7 @@ void MainGame::Input()
 }
 
 
-bool MainGame::collisDetect(glm::vec3 m1Pos, float m1Rad, glm::vec3 m2Pos, float m2Rad)
-{
-	float distance = glm::sqrt((m2Pos.x - m1Pos.x)*(m2Pos.x - m1Pos.x) + (m2Pos.y - m1Pos.y)*(m2Pos.y - m1Pos.y) + (m2Pos.z - m1Pos.z)*(m2Pos.z - m1Pos.z));
 
-	if (distance < (m1Rad + m2Rad))
-	{
-		//add bool to mesh
-		sndDevice.listenerSet(myCamera.getPos(), m1Pos);
-		playSnd(crash, m1Pos);
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-void MainGame::playSnd(unsigned int Source, glm::vec3 pos)
-{
-	//state all within openAL
-	//AL_INITIAL
-	//AL_STOPPED
-	//AL_PLAYING
-	//AL_PAUSED
-	ALint state; 
-	alGetSourcei(Source, AL_SOURCE_STATE, &state);
-	
-	if (AL_PLAYING != state)
-	{
-		sndDevice.soundPlay(Source, pos);
-	}
-}
 
 void MainGame::Draw()
 {
@@ -288,3 +257,31 @@ void MainGame::Draw()
 
 	gameWindow.swapBuffer();
 } 
+bool MainGame::collisDetect(glm::vec3 m1Pos, float m1Rad, glm::vec3 m2Pos, float m2Rad)
+{
+	float distance = glm::sqrt((m2Pos.x - m1Pos.x) * (m2Pos.x - m1Pos.x) + (m2Pos.y - m1Pos.y) * (m2Pos.y - m1Pos.y) + (m2Pos.z - m1Pos.z) * (m2Pos.z - m1Pos.z));
+
+	if (distance < (m1Rad + m2Rad))
+	{
+		//add bool to mesh
+		sndDevice.listenerSet(myCamera.getPos(), m1Pos);
+		playSnd(crash, m1Pos);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void MainGame::playSnd(unsigned int Source, glm::vec3 pos)
+{
+	//state all within openAL = AL_INITIAL|AL_STOPPED|AL_PLAYING|AL_PAUSED
+	ALint state;
+	alGetSourcei(Source, AL_SOURCE_STATE, &state);
+
+	if (AL_PLAYING != state)
+	{
+		sndDevice.soundPlay(Source, pos);
+	}
+}

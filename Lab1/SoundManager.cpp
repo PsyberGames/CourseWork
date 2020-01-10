@@ -55,7 +55,8 @@ int SoundManager::convertToInt(char* buffer, int length)
 	else
 		for (int i = 0; i < length; i++)
 			((char*)&a)[3 - i] = buffer[i];
-	return a;//output int array this is needing done because OpenAL uses int within it parameters
+	//output int array this is needing done because OpenAL uses int within it parameters
+	return a;
 }
 
 char* SoundManager::loadWAV(const char* fn, int& chan, int& samplerate, int& bps, int& size)

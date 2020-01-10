@@ -26,7 +26,7 @@ private:
 	void Draw();
 	bool collisDetect(glm::vec3 m1Pos, float m1Rad, glm::vec3 m2Pos, float m2Rad);
 	void playSnd(unsigned int Source, glm::vec3 pos);
-
+	
 	Window gameWindow;
 	GameCondition gameState;
 	CreateMesh meshes[4];

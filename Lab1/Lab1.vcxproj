@@ -99,11 +99,6 @@
     <None Include="..\res\shader.frag" />
     <None Include="..\res\shader.vert" />
   </ItemGroup>
-  <ItemGroup>
-    <Object Include="..\res\monkey3.obj">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </Object>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -3,5 +3,7 @@
 C:\Users\500189222\Desktop\CourseWork\CourseWork\Lab1\MainGame.cpp(89,25): warning C4305: 'argument': truncation from 'double' to 'float'
 C:\Users\500189222\Desktop\CourseWork\CourseWork\Lab1\MainGame.cpp(93,26): warning C4305: 'argument': truncation from 'double' to 'float'
 C:\Users\500189222\Desktop\CourseWork\CourseWork\Lab1\MainGame.cpp(99,24): warning C4305: 'argument': truncation from 'double' to 'float'
+  SoundManager.cpp
+  Generating Code...
 C:\Users\500189222\Desktop\CourseWork\CourseWork\Lab1\MainGame.cpp(103,25): warning C4305: 'argument': truncation from 'double' to 'float'
   Lab1.vcxproj -> C:\Users\500189222\Desktop\CourseWork\CourseWork\Debug\CourseWork.exe
